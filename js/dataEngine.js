@@ -376,35 +376,42 @@
         prevUnits = item.units;
       });
 
-      // Crecimiento en unidades Ultimo mes
-      let lastGrowthRate = 0;
-      if (growthRates.length > 0) {
-        lastGrowthRate = growthRates[growthRates.length - 1];
+      // Escenario Base solicitado: Crecimiento real histórico (Julio vs Junio) = 8.58%
+      const baseGrowthRate = 0.0858;
+
+      // Proyectar Agosto (Mes actual incompleto) usando Run Rate Diario (16 de 31 días)
+      let lastPrevUnits = timeline.length > 0 ? timeline[timeline.length - 1].units : 0;
+      let isAugust = timeline.length > 0 && timeline[timeline.length - 1].monthName.toLowerCase() === 'agosto';
+      
+      if (isAugust) {
+         lastPrevUnits = Math.round((lastPrevUnits / 16) * 31);
+         // Actualizamos el registro de Agosto en rows para mostrar la proyección al cierre de mes
+         rows[rows.length - 1].units = lastPrevUnits; // Usar el proyectado como base visual
+         rows[rows.length - 1].projectedUnits = lastPrevUnits;
       }
 
       // Proyectar Septiembre, Octubre, Noviembre, Diciembre
       const projections = [];
-      let lastPrevUnits = timeline.length > 0 ? timeline[timeline.length - 1].units : 0;
       
       const futureMonths = ['Septiembre (Proyectado)', 'Octubre (Proyectado)', 'Noviembre (Proyectado)', 'Diciembre (Proyectado)'];
 
       futureMonths.forEach(mName => {
-        // Formula: [Unidades vendidas mes anterior] * (1 + [% Crecimiento en unidades Ultimo mes])
-        const calcProj = lastPrevUnits * (1 + lastGrowthRate);
+        // Formula: Venta mes anterior × (1 + tasa de crecimiento base)
+        const calcProj = lastPrevUnits * (1 + baseGrowthRate);
         const finalUnits = calcProj < 0 ? 0 : Math.round(calcProj);
 
         projections.push({
           monthName: mName,
           units: finalUnits,
           prevUnits: lastPrevUnits,
-          growthPct: lastGrowthRate * 100,
+          growthPct: baseGrowthRate * 100,
           isProjection: true
         });
 
         lastPrevUnits = finalUnits;
       });
 
-      return { rows, projections, avgGrowthRatePct: lastGrowthRate * 100 };
+      return { rows, projections, avgGrowthRatePct: baseGrowthRate * 100 };
     },
 
 
