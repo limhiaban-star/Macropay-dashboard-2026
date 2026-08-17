@@ -411,18 +411,25 @@
       // Proyectar Septiembre, Octubre, Noviembre, Diciembre
       const projections = [];
       
-      const futureMonths = ['Septiembre (Proyectado)', 'Octubre (Proyectado)', 'Noviembre (Proyectado)', 'Diciembre (Proyectado)'];
+      const futureMonths = [
+        { name: 'Septiembre (Proyectado)', rate: baseGrowthRate },
+        { name: 'Octubre (Proyectado)', rate: baseGrowthRate },
+        { name: 'Noviembre (Proyectado)', rate: 0.12 },    // 12% growth requested
+        { name: 'Diciembre (Proyectado)', rate: 0.105 }    // 10.5% growth requested
+      ];
 
-      futureMonths.forEach(mName => {
-        // Formula: Venta mes anterior × (1 + tasa de crecimiento base)
-        const calcProj = lastPrevUnits * (1 + baseGrowthRate);
+      futureMonths.forEach(m => {
+        const mName = m.name;
+        const currentRate = m.rate;
+        // Formula: Venta mes anterior × (1 + tasa de crecimiento base/personalizada)
+        const calcProj = lastPrevUnits * (1 + currentRate);
         const finalUnits = calcProj < 0 ? 0 : Math.round(calcProj);
 
         projections.push({
           monthName: mName,
           units: finalUnits,
           prevUnits: lastPrevUnits,
-          growthPct: baseGrowthRate * 100,
+          growthPct: currentRate * 100,
           isProjection: true
         });
 
