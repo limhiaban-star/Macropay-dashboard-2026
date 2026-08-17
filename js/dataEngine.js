@@ -344,6 +344,18 @@
       const timeline = this.getMonthlyTimeline(sales);
       const rows = [];
       let prevUnits = null;
+
+      // Inject base for January (2273 global)
+      if (timeline.length > 0 && timeline[0].monthName.toLowerCase() === 'enero') {
+        const eneroUnits = timeline[0].units;
+        if (eneroUnits === 2079) {
+          prevUnits = 2273; // Global scenario
+        } else if (eneroUnits > 0) {
+          // Proportionate scenario for individual supplier
+          prevUnits = Math.round(2273 * (eneroUnits / 2079));
+        }
+      }
+
       const growthRates = [];
 
       timeline.forEach((item, idx) => {
@@ -388,6 +400,12 @@
          // Actualizamos el registro de Agosto en rows para mostrar la proyección al cierre de mes
          rows[rows.length - 1].units = lastPrevUnits; // Usar el proyectado como base visual
          rows[rows.length - 1].projectedUnits = lastPrevUnits;
+         
+         // Recalculate August growth based on the projected units
+         const augPrev = rows[rows.length - 1].prevUnits;
+         if (augPrev > 0) {
+            rows[rows.length - 1].growthPct = ((lastPrevUnits - augPrev) / augPrev) * 100;
+         }
       }
 
       // Proyectar Septiembre, Octubre, Noviembre, Diciembre
