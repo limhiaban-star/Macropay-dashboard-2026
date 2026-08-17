@@ -235,6 +235,31 @@
       return rows;
     },
 
+    getMonthlySupplierShareMatrix(rawSales) {
+      const suppliers = new Set();
+      const monthlyTotals = {};
+      MONTH_ORDER.forEach(m => monthlyTotals[m] = { total: 0, suppliers: {} });
+
+      rawSales.forEach(r => {
+        suppliers.add(r.proveedor);
+        if (monthlyTotals[r.mes]) {
+          monthlyTotals[r.mes].total += r.cantidad;
+          monthlyTotals[r.mes].suppliers[r.proveedor] = (monthlyTotals[r.mes].suppliers[r.proveedor] || 0) + r.cantidad;
+        }
+      });
+
+      const supplierList = Array.from(suppliers).sort();
+      const matrix = {};
+      supplierList.forEach(s => {
+        matrix[s] = MONTH_ORDER.map(m => {
+          const mData = monthlyTotals[m];
+          return mData.total > 0 ? (mData.suppliers[s] || 0) / mData.total * 100 : 0;
+        });
+      });
+
+      return { suppliers: supplierList, matrix, months: MONTH_ORDER };
+    },
+
     // 7. Sales by branch type
     getSalesByBranchType(sales) {
       const counts = {};

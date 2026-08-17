@@ -530,23 +530,49 @@
   // 5 & 6. Units & Share by Supplier
   function renderSupplierUnitsAndShare(sales, rawSales) {
     destroyChart('chart-supplier-share');
-    // For the chart, we still want to show the mix of what is currently filtered
-    const chartData = window.DataEngine.getSalesUnitsBySupplier(sales);
+    
+    // Get 100% stacked bar chart data over time based on rawSales
+    const chartData = window.DataEngine.getMonthlySupplierShareMatrix(rawSales);
+    const datasets = chartData.suppliers.map((s, i) => ({
+      label: s,
+      data: chartData.matrix[s],
+      backgroundColor: PALETTE[i % PALETTE.length]
+    }));
 
     const ctx = document.getElementById('chart-supplier-share').getContext('2d');
     state.charts['chart-supplier-share'] = new Chart(ctx, {
-      type: 'pie',
+      type: 'bar',
       data: {
-        labels: chartData.map(d => d.proveedor),
-        datasets: [{
-          data: chartData.map(d => d.quantity),
-          backgroundColor: PALETTE
-        }]
+        labels: chartData.months.map(m => m.charAt(0).toUpperCase() + m.slice(1)),
+        datasets: datasets
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' } }
+        plugins: { 
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + context.raw.toFixed(2) + '%';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true },
+          y: { 
+            stacked: true, 
+            max: 100,
+            ticks: {
+              callback: function(value) { return value + '%'; }
+            },
+            title: {
+              display: true,
+              text: 'Suma de Cantidad (%)'
+            }
+          }
+        }
       }
     });
 
