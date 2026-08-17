@@ -211,6 +211,7 @@
           periodo: 'GLOBAL (Acumulado)',
           proveedor: p,
           quantity: qty,
+          total: globalGrandTotal,
           pct: globalGrandTotal > 0 ? (qty / globalGrandTotal) * 100 : 0,
           isGlobal: true
         });
@@ -225,6 +226,7 @@
               periodo: MONTH_NAMES[m],
               proveedor: p,
               quantity: qty,
+              total: monthData.total,
               pct: monthData.total > 0 ? (qty / monthData.total) * 100 : 0,
               isGlobal: false
             });

@@ -584,8 +584,9 @@
         <tr>
           <th>Mes / Periodo</th>
           <th>Proveedor</th>
-          <th>Unidades Vendidas</th>
-          <th>% Participación (vs Total Mercado)</th>
+          <th>Unidades Proveedor</th>
+          <th>Total Mercado (Mes)</th>
+          <th>% Participación</th>
         </tr>
       </thead>
       <tbody>`;
@@ -596,6 +597,7 @@
         <td class="${d.isGlobal ? 'font-black text-blue-900' : 'font-semibold text-slate-700'}">${d.periodo}</td>
         <td class="font-bold">${d.proveedor}</td>
         <td class="font-bold text-blue-700">${window.DataEngine.formatNumber(d.quantity)}</td>
+        <td class="font-bold text-slate-500">${window.DataEngine.formatNumber(d.total)}</td>
         <td class="font-bold text-amber-600">${window.DataEngine.formatPercent(d.pct)}</td>
       </tr>`;
     });
