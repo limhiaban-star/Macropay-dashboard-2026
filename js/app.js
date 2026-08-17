@@ -319,7 +319,7 @@
     renderTop10Models(sales);
 
     // 5 & 6. Units sold & Market Share by supplier
-    renderSupplierUnitsAndShare(sales);
+    renderSupplierUnitsAndShare(sales, rawSales);
 
     // 7. Sales by branch type
     renderSalesByBranchType(sales);
@@ -528,17 +528,18 @@
   }
 
   // 5 & 6. Units & Share by Supplier
-  function renderSupplierUnitsAndShare(sales) {
+  function renderSupplierUnitsAndShare(sales, rawSales) {
     destroyChart('chart-supplier-share');
-    const data = window.DataEngine.getSalesUnitsBySupplier(sales);
+    // For the chart, we still want to show the mix of what is currently filtered
+    const chartData = window.DataEngine.getSalesUnitsBySupplier(sales);
 
     const ctx = document.getElementById('chart-supplier-share').getContext('2d');
     state.charts['chart-supplier-share'] = new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: data.map(d => d.proveedor),
+        labels: chartData.map(d => d.proveedor),
         datasets: [{
-          data: data.map(d => d.quantity),
+          data: chartData.map(d => d.quantity),
           backgroundColor: PALETTE
         }]
       },
@@ -549,17 +550,24 @@
       }
     });
 
+    // For the table, we use the new global and monthly calculation
+    const tableData = window.DataEngine.getSupplierShareGlobalAndMonthly(sales, rawSales);
+
     let tableHtml = `<table class="custom-table">
       <thead>
         <tr>
+          <th>Mes / Periodo</th>
           <th>Proveedor</th>
           <th>Unidades Vendidas</th>
-          <th>% Participación</th>
+          <th>% Participación (vs Total Mercado)</th>
         </tr>
       </thead>
       <tbody>`;
-    data.forEach(d => {
-      tableHtml += `<tr>
+    tableData.forEach(d => {
+      // Highlight global rows slightly differently
+      const bgClass = d.isGlobal ? 'bg-blue-50/50' : '';
+      tableHtml += `<tr class="${bgClass}">
+        <td class="${d.isGlobal ? 'font-black text-blue-900' : 'font-semibold text-slate-700'}">${d.periodo}</td>
         <td class="font-bold">${d.proveedor}</td>
         <td class="font-bold text-blue-700">${window.DataEngine.formatNumber(d.quantity)}</td>
         <td class="font-bold text-amber-600">${window.DataEngine.formatPercent(d.pct)}</td>

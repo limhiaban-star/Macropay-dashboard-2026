@@ -180,6 +180,61 @@
         .sort((a, b) => b.quantity - a.quantity);
     },
 
+    getSupplierShareGlobalAndMonthly(filteredSales, rawSales) {
+      const rows = [];
+      const globalTotals = {};
+      let globalGrandTotal = 0;
+
+      const monthlyTotals = {};
+      MONTH_ORDER.forEach(m => monthlyTotals[m] = { total: 0, suppliers: {} });
+
+      // Raw sales for denominator
+      rawSales.forEach(r => {
+        globalGrandTotal += r.cantidad;
+        if (monthlyTotals[r.mes]) {
+          monthlyTotals[r.mes].total += r.cantidad;
+        }
+      });
+
+      // Filtered sales for numerator
+      filteredSales.forEach(r => {
+        const p = r.proveedor;
+        globalTotals[p] = (globalTotals[p] || 0) + r.cantidad;
+        if (monthlyTotals[r.mes]) {
+          monthlyTotals[r.mes].suppliers[p] = (monthlyTotals[r.mes].suppliers[p] || 0) + r.cantidad;
+        }
+      });
+
+      // Global Rows
+      Object.entries(globalTotals).forEach(([p, qty]) => {
+        rows.push({
+          periodo: 'GLOBAL (Acumulado)',
+          proveedor: p,
+          quantity: qty,
+          pct: globalGrandTotal > 0 ? (qty / globalGrandTotal) * 100 : 0,
+          isGlobal: true
+        });
+      });
+
+      // Monthly Rows
+      MONTH_ORDER.forEach(m => {
+        const monthData = monthlyTotals[m];
+        if (monthData && Object.keys(monthData.suppliers).length > 0) {
+          Object.entries(monthData.suppliers).forEach(([p, qty]) => {
+            rows.push({
+              periodo: MONTH_NAMES[m],
+              proveedor: p,
+              quantity: qty,
+              pct: monthData.total > 0 ? (qty / monthData.total) * 100 : 0,
+              isGlobal: false
+            });
+          });
+        }
+      });
+
+      return rows;
+    },
+
     // 7. Sales by branch type
     getSalesByBranchType(sales) {
       const counts = {};
