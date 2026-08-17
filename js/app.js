@@ -910,6 +910,7 @@
     );
 
     // Calculate Months of Inventory
+    const rawSales = window.MACROPAY_DATA ? window.MACROPAY_DATA.sales : [];
     const sales = window.DataEngine.filterSales(rawSales, state.filters);
     const timeline = window.DataEngine.getMonthlyTimeline(sales);
     const completedMonths = timeline.filter(t => t.units > 0);
