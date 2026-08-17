@@ -297,6 +297,15 @@
       momEl.textContent = '0.0%';
     }
 
+    const shareEl = document.getElementById('kpi-sales-share');
+    if (state.filters.supplier !== 'all') {
+      const globalTotalUnits = rawSales.reduce((acc, r) => acc + r.cantidad, 0);
+      const share = globalTotalUnits > 0 ? (totalUnits / globalTotalUnits) * 100 : 0;
+      shareEl.textContent = share.toFixed(1) + '%';
+    } else {
+      shareEl.textContent = '100%';
+    }
+
     // 1. Monthly sales by supplier
     renderSalesBySupplier(sales);
 
