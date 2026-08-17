@@ -539,7 +539,7 @@
       backgroundColor: PALETTE[i % PALETTE.length]
     }));
 
-    if (state.filters.supplier !== 'all') {
+    if (state.filters.supplier !== 'ALL') {
       const currentSupplier = state.filters.supplier;
       const supplierData = chartData.matrix[currentSupplier] || chartData.months.map(() => 0);
       const otrosData = chartData.months.map((m, idx) => {
