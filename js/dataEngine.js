@@ -376,36 +376,35 @@
         prevUnits = item.units;
       });
 
-      // Compute average projected growth rate from representative recent months (e.g. Mayo, Junio, Julio)
-      let avgGrowthRate = 0.035; // Default ~3.5% baseline
-      if (growthRates.length >= 3) {
-        const recentRates = growthRates.slice(-4);
-        avgGrowthRate = recentRates.reduce((a, b) => a + b, 0) / recentRates.length;
+      // Crecimiento en unidades Ultimo mes
+      let lastGrowthRate = 0;
+      if (growthRates.length > 0) {
+        lastGrowthRate = growthRates[growthRates.length - 1];
       }
 
-      // Project next 3 months (Septiembre, Octubre, Noviembre) using formula iteratively
+      // Proyectar Septiembre, Octubre, Noviembre, Diciembre
       const projections = [];
       let lastPrevUnits = timeline.length > 0 ? timeline[timeline.length - 1].units : 0;
       
-      const futureMonths = ['Septiembre (Proyectado)', 'Octubre (Proyectado)', 'Noviembre (Proyectado)'];
+      const futureMonths = ['Septiembre (Proyectado)', 'Octubre (Proyectado)', 'Noviembre (Proyectado)', 'Diciembre (Proyectado)'];
 
       futureMonths.forEach(mName => {
-        // Formula: IF(lastPrevUnits * (1 + avgGrowthRate) < 0, 0, lastPrevUnits * (1 + avgGrowthRate))
-        const calcProj = lastPrevUnits * (1 + avgGrowthRate);
+        // Formula: [Unidades vendidas mes anterior] * (1 + [% Crecimiento en unidades Ultimo mes])
+        const calcProj = lastPrevUnits * (1 + lastGrowthRate);
         const finalUnits = calcProj < 0 ? 0 : Math.round(calcProj);
 
         projections.push({
           monthName: mName,
           units: finalUnits,
           prevUnits: lastPrevUnits,
-          growthPct: avgGrowthRate * 100,
+          growthPct: lastGrowthRate * 100,
           isProjection: true
         });
 
         lastPrevUnits = finalUnits;
       });
 
-      return { rows, projections, avgGrowthRatePct: avgGrowthRate * 100 };
+      return { rows, projections, avgGrowthRatePct: lastGrowthRate * 100 };
     },
 
 
