@@ -234,6 +234,39 @@
         }
       });
 
+      // Projected Rows
+      const marketProjData = this.getMoMAndProjection(rawSales).projections;
+      const marketProjMap = {};
+      marketProjData.forEach(p => marketProjMap[p.monthName] = p.units);
+      
+      const supplierProjMap = {};
+      Object.keys(globalTotals).forEach(p => {
+        const pSales = filteredSales.filter(s => s.proveedor === p);
+        const pProjData = this.getMoMAndProjection(pSales).projections;
+        pProjData.forEach(proj => {
+          if (!supplierProjMap[proj.monthName]) supplierProjMap[proj.monthName] = {};
+          supplierProjMap[proj.monthName][p] = proj.units;
+        });
+      });
+
+      const futureMonths = ['Septiembre (Proyectado)', 'Octubre (Proyectado)', 'Noviembre (Proyectado)', 'Diciembre (Proyectado)'];
+      futureMonths.forEach(mName => {
+        const marketTotal = marketProjMap[mName] || 0;
+        if (supplierProjMap[mName]) {
+          Object.entries(supplierProjMap[mName]).forEach(([p, qty]) => {
+            rows.push({
+              periodo: mName,
+              proveedor: p,
+              quantity: qty,
+              total: marketTotal,
+              pct: marketTotal > 0 ? (qty / marketTotal) * 100 : 0,
+              isGlobal: false,
+              isProjection: true
+            });
+          });
+        }
+      });
+
       return rows;
     },
 

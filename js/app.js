@@ -617,11 +617,16 @@
       <tbody>`;
     tableData.forEach(d => {
       // Highlight global rows slightly differently
-      const bgClass = d.isGlobal ? 'bg-blue-50/50' : '';
+      let bgClass = d.isGlobal ? 'bg-blue-50/50' : '';
+      if (d.isProjection) bgClass = 'bg-fuchsia-50/30 border-l-4 border-fuchsia-500';
+      
+      const textClass = d.isGlobal ? 'font-black text-blue-900' : (d.isProjection ? 'font-bold text-fuchsia-700 italic' : 'font-semibold text-slate-700');
+      const badge = d.isProjection ? `<span class="ml-2 text-[10px] bg-fuchsia-100 text-fuchsia-700 px-2 py-0.5 rounded-full uppercase">Proy</span>` : '';
+
       tableHtml += `<tr class="${bgClass}">
-        <td class="${d.isGlobal ? 'font-black text-blue-900' : 'font-semibold text-slate-700'}">${d.periodo}</td>
+        <td class="${textClass}">${d.periodo} ${badge}</td>
         <td class="font-bold">${d.proveedor}</td>
-        <td class="font-bold text-blue-700">${window.DataEngine.formatNumber(d.quantity)}</td>
+        <td class="font-bold ${d.isProjection ? 'text-fuchsia-600' : 'text-blue-700'}">${window.DataEngine.formatNumber(d.quantity)}</td>
         <td class="font-bold text-slate-500">${window.DataEngine.formatNumber(d.total)}</td>
         <td class="font-bold text-amber-600">${window.DataEngine.formatPercent(d.pct)}</td>
       </tr>`;
