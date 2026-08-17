@@ -254497,7 +254497,7 @@ window.MACROPAY_DATA = {
       "anio": "2026",
       "mes": "junio",
       "dia": "7",
-      "cantidad": 196,
+      "cantidad": 1,
       "estado": "Tabasco"
     }
   ],
