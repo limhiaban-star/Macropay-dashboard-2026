@@ -1,0 +1,13 @@
+{
+  "name": "macropay-dashboard-2026",
+  "version": "1.0.0",
+  "description": "Dashboard Web de Ventas e Inventarios para Proveedores Macropay 2026",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build-data": "node scripts/build_data.js"
+  },
+  "author": "Macropay AI Team",
+  "license": "ISC"
+}
