@@ -533,11 +533,36 @@
     
     // Get 100% stacked bar chart data over time based on rawSales
     const chartData = window.DataEngine.getMonthlySupplierShareMatrix(rawSales);
-    const datasets = chartData.suppliers.map((s, i) => ({
+    let datasets = chartData.suppliers.map((s, i) => ({
       label: s,
       data: chartData.matrix[s],
       backgroundColor: PALETTE[i % PALETTE.length]
     }));
+
+    if (state.filters.supplier !== 'all') {
+      const currentSupplier = state.filters.supplier;
+      const supplierData = chartData.matrix[currentSupplier] || chartData.months.map(() => 0);
+      const otrosData = chartData.months.map((m, idx) => {
+        const sumOthers = chartData.suppliers.reduce((acc, s) => s !== currentSupplier ? acc + (chartData.matrix[s][idx] || 0) : acc, 0);
+        return sumOthers;
+      });
+
+      const supplierIndex = chartData.suppliers.indexOf(currentSupplier);
+      const supplierColor = supplierIndex >= 0 ? PALETTE[supplierIndex % PALETTE.length] : PALETTE[0];
+
+      datasets = [
+        {
+          label: currentSupplier,
+          data: supplierData,
+          backgroundColor: supplierColor
+        },
+        {
+          label: 'Resto del Mercado',
+          data: otrosData,
+          backgroundColor: '#cbd5e1' // slate-300
+        }
+      ];
+    }
 
     const ctx = document.getElementById('chart-supplier-share').getContext('2d');
     state.charts['chart-supplier-share'] = new Chart(ctx, {
