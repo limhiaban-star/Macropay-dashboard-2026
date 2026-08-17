@@ -909,6 +909,29 @@
       inv.reduce((acc, r) => acc + r.libreVal + r.inspVal + r.bloqVal, 0)
     );
 
+    // Calculate Months of Inventory
+    const sales = window.DataEngine.filterSales(rawSales, state.filters);
+    const timeline = window.DataEngine.getMonthlyTimeline(sales);
+    const completedMonths = timeline.filter(t => t.units > 0);
+    
+    let avgMonthlySales = 2500;
+    if (completedMonths.length > 0) {
+      if (completedMonths[completedMonths.length - 1].monthKey === 'agosto') {
+        // Average of previous 3 completed months (May, Jun, Jul) if August is the last month
+        const recent = completedMonths.slice(Math.max(0, completedMonths.length - 4), completedMonths.length - 1);
+        if (recent.length > 0) {
+          avgMonthlySales = recent.reduce((sum, item) => sum + item.units, 0) / recent.length;
+        }
+      } else {
+        avgMonthlySales = completedMonths.reduce((sum, item) => sum + item.units, 0) / completedMonths.length;
+      }
+    }
+    
+    const totalInventory = gaugeData.totalLibre + gaugeData.totalInsp + gaugeData.totalBloq;
+    const inventoryMonths = avgMonthlySales > 0 ? (totalInventory / avgMonthlySales).toFixed(2) : 0;
+    const monthsKpi = document.getElementById('kpi-inv-months');
+    if (monthsKpi) monthsKpi.textContent = inventoryMonths + ' meses';
+
     const gaugeKpiEl = document.getElementById('kpi-inv-gauge-status');
     if (gaugeKpiEl) {
       gaugeKpiEl.innerHTML = `

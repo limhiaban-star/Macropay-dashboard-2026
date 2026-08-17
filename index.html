@@ -280,7 +280,7 @@
     <div id="inv-dashboard-container" class="space-y-8 hidden">
 
       <!-- KPI Summary Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="kpi-card">
           <div class="text-xs font-bold text-slate-500 uppercase">Libre Utilización (Disponible)</div>
           <div id="kpi-inv-libre-qty" class="text-2xl font-black text-blue-900 mt-1">0</div>
@@ -300,9 +300,15 @@
         </div>
 
         <div class="kpi-card kpi-lime">
-          <div class="text-xs font-bold text-slate-500 uppercase">Valor Total del Inventario ($ MXN)</div>
+          <div class="text-xs font-bold text-slate-500 uppercase">Valor Total del Inventario</div>
           <div id="kpi-inv-total-val" class="text-lg font-black text-emerald-900 mt-1">0</div>
           <div id="kpi-inv-gauge-status" class="mt-1"></div>
+        </div>
+
+        <div class="kpi-card kpi-purple border-purple-200 bg-purple-50">
+          <div class="text-xs font-bold text-purple-700 uppercase">Meses de Inventario</div>
+          <div id="kpi-inv-months" class="text-2xl font-black text-purple-900 mt-1">0.0</div>
+          <div class="text-[11px] text-purple-600 font-bold mt-1"><i class="fa-solid fa-calendar-days mr-1"></i>Cobertura estimada</div>
         </div>
       </div>
 
