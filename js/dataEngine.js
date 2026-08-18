@@ -424,12 +424,12 @@
       // Escenario Base solicitado: Crecimiento real histórico (Julio vs Junio) = 8.58%
       const baseGrowthRate = 0.0858;
 
-      // Proyectar Agosto (Mes actual incompleto) usando Run Rate Diario (16 de 31 días)
+      // Proyectar Agosto (Mes actual incompleto) usando Run Rate Diario (18 de 31 días)
       let lastPrevUnits = timeline.length > 0 ? timeline[timeline.length - 1].units : 0;
       let isAugust = timeline.length > 0 && timeline[timeline.length - 1].monthName.toLowerCase() === 'agosto';
       
       if (isAugust) {
-         lastPrevUnits = Math.round((lastPrevUnits / 16) * 31);
+         lastPrevUnits = Math.round((lastPrevUnits / 18) * 31);
          // Actualizamos el registro de Agosto en rows para mostrar la proyección al cierre de mes
          rows[rows.length - 1].units = lastPrevUnits; // Usar el proyectado como base visual
          rows[rows.length - 1].projectedUnits = lastPrevUnits;
