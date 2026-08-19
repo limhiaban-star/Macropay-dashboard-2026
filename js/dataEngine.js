@@ -706,6 +706,44 @@
           };
         })
         .sort((a, b) => b.bloq - a.bloq);
+    },
+
+    // 13 & 14. Inventory by Location Type (CEDI vs Sucursal)
+    getInventoryByLocationType(inventory) {
+      const cedisList = {};
+      const sucursalesList = {};
+
+      inventory.forEach(r => {
+        const suc = r.sucursal || 'SIN SUCURSAL';
+        const isCedi = suc.toUpperCase().includes('CEDI');
+        
+        const target = isCedi ? cedisList : sucursalesList;
+        
+        if (!target[suc]) {
+          target[suc] = {
+            location: suc,
+            libreQty: 0, libreVal: 0,
+            inspQty: 0, inspVal: 0,
+            bloqQty: 0, bloqVal: 0,
+            totalQty: 0, totalVal: 0
+          };
+        }
+        
+        target[suc].libreQty += r.libreQty;
+        target[suc].libreVal += r.libreVal;
+        target[suc].inspQty += r.inspQty;
+        target[suc].inspVal += r.inspVal;
+        target[suc].bloqQty += r.bloqQty;
+        target[suc].bloqVal += r.bloqVal;
+        
+        target[suc].totalQty += (r.libreQty + r.inspQty + r.bloqQty);
+        target[suc].totalVal += (r.libreVal + r.inspVal + r.bloqVal);
+      });
+
+      return {
+        cedis: Object.values(cedisList).sort((a,b) => b.totalQty - a.totalQty),
+        sucursales: Object.values(sucursalesList).sort((a,b) => b.totalQty - a.totalQty)
+      };
     }
   };
 

@@ -965,6 +965,9 @@
 
     // 12. Blocked by CEDIS
     renderBlockedByCedis(inv);
+
+    // 13 & 14. Inventory by CEDIS and Sucursales
+    renderInventoryByLocation(inv);
   }
 
   // 1, 2, 3. Libre Utilización
@@ -1270,6 +1273,51 @@
 
     tableHtml += `</tbody></table>`;
     document.getElementById('table-inv-cedis-bloq').innerHTML = tableHtml;
+  }
+
+  // 13 & 14. Inventory by Location (CEDIS and Sucursales)
+  function renderInventoryByLocation(inv) {
+    const { cedis, sucursales } = window.DataEngine.getInventoryByLocationType(inv);
+
+    const generateTableHtml = (dataList, isCedi) => {
+      let html = `<table class="custom-table text-xs">
+        <thead>
+          <tr>
+            <th>${isCedi ? 'CEDI' : 'Sucursal'}</th>
+            <th class="text-blue-700">Libre Utilización</th>
+            <th class="text-blue-700">Valor Libre ($)</th>
+            <th class="text-amber-700">Inspección</th>
+            <th class="text-amber-700">Valor Insp ($)</th>
+            <th class="text-red-700">Bloqueado</th>
+            <th class="text-red-700">Valor Bloq ($)</th>
+            <th class="bg-slate-100">Total Unidades</th>
+            <th class="bg-slate-100">Total Valor ($)</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      
+      dataList.forEach(item => {
+        html += `<tr>
+          <td class="font-bold">${item.location}</td>
+          <td class="text-blue-700 font-bold">${window.DataEngine.formatNumber(item.libreQty)}</td>
+          <td class="text-slate-600">${window.DataEngine.formatCurrency(item.libreVal)}</td>
+          <td class="text-amber-700 font-bold">${window.DataEngine.formatNumber(item.inspQty)}</td>
+          <td class="text-slate-600">${window.DataEngine.formatCurrency(item.inspVal)}</td>
+          <td class="text-red-600 font-bold">${window.DataEngine.formatNumber(item.bloqQty)}</td>
+          <td class="text-slate-600">${window.DataEngine.formatCurrency(item.bloqVal)}</td>
+          <td class="bg-slate-50 font-black">${window.DataEngine.formatNumber(item.totalQty)}</td>
+          <td class="bg-slate-50 font-bold text-emerald-700">${window.DataEngine.formatCurrency(item.totalVal)}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      return html;
+    };
+
+    const cedisTableEl = document.getElementById('table-inv-cedis-summary');
+    if (cedisTableEl) cedisTableEl.innerHTML = generateTableHtml(cedis, true);
+
+    const sucursalTableEl = document.getElementById('table-inv-sucursales-summary');
+    if (sucursalTableEl) sucursalTableEl.innerHTML = generateTableHtml(sucursales, false);
   }
 
   // Export Table to Excel

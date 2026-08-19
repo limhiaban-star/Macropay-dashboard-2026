@@ -374,6 +374,25 @@
         <div id="table-inv-cedis-bloq" class="table-container"></div>
       </div>
 
+      <!-- Indicator 13 & 14: Resumen de Inventario (CEDI y Sucursales) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="chart-card border-t-4 border-indigo-500">
+          <div class="chart-card-title text-indigo-700">
+            <span><i class="fa-solid fa-building mr-2"></i>Inventario en CEDIS</span>
+            <button onclick="exportTableToExcel('table-inv-cedis-summary', 'Inventario_CEDIS')" class="btn-outline text-xs border-indigo-300 text-indigo-600"><i class="fa-solid fa-file-excel mr-1"></i>Excel</button>
+          </div>
+          <div id="table-inv-cedis-summary" class="table-container max-h-96 overflow-y-auto"></div>
+        </div>
+
+        <div class="chart-card border-t-4 border-teal-500">
+          <div class="chart-card-title text-teal-700">
+            <span><i class="fa-solid fa-store mr-2"></i>Inventario en Sucursales</span>
+            <button onclick="exportTableToExcel('table-inv-sucursales-summary', 'Inventario_Sucursales')" class="btn-outline text-xs border-teal-300 text-teal-600"><i class="fa-solid fa-file-excel mr-1"></i>Excel</button>
+          </div>
+          <div id="table-inv-sucursales-summary" class="table-container max-h-96 overflow-y-auto"></div>
+        </div>
+      </div>
+
     </div>
 
   </main>
