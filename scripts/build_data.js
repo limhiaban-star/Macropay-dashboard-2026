@@ -86,22 +86,24 @@ const invPath = path.join(__dirname, '..', 'Reporte de proveedores_2026', 'Inven
 const rawSales = parseCSV(salesPath);
 const rawInv = parseCSV(invPath);
 
-// Process sales records
-const sales = rawSales.map(r => ({
-  proveedor: r['Proveedor'] || 'SIN PROVEEDOR',
-  materialText: r['Texto breve material'] || 'DESCONOCIDO',
-  materialCode: r['Material'] || '',
-  categoria: r['CATEGORIA'] || 'SIN CATEGORÍA',
-  cedis: r['CEDIS MOTOS'] || 'SIN CEDIS',
-  centro: r['Centro'] || '',
-  sucursal: r['SUCURSAL'] || 'SIN SUCURSAL',
-  tipoSucursal: r['TIPO DE SUCURSAL'] || 'GENERAL',
-  anio: r['Año'] || '2026',
-  mes: (r['Mes'] || '').toLowerCase(),
-  dia: r['Día'] || '',
-  cantidad: parseFloat(r['Suma de Cantidad']) || 0,
-  estado: extractState(r['SUCURSAL'], r['CEDIS MOTOS'])
-}));
+// Process sales records (Filter for 2026 only)
+const sales = rawSales
+  .map(r => ({
+    proveedor: r['Proveedor'] || 'SIN PROVEEDOR',
+    materialText: r['Texto breve material'] || 'DESCONOCIDO',
+    materialCode: r['Material'] || '',
+    categoria: r['CATEGORIA'] || 'SIN CATEGORÍA',
+    cedis: r['CEDIS MOTOS'] || 'SIN CEDIS',
+    centro: r['Centro'] || '',
+    sucursal: r['SUCURSAL'] || 'SIN SUCURSAL',
+    tipoSucursal: r['TIPO DE SUCURSAL'] || 'GENERAL',
+    anio: r['Año'] || '2026',
+    mes: (r['Mes'] || '').toLowerCase(),
+    dia: r['Día'] || '',
+    cantidad: parseFloat(r['Suma de Cantidad']) || 0,
+    estado: extractState(r['SUCURSAL'], r['CEDIS MOTOS'])
+  }))
+  .filter(r => r.anio === '2026');
 
 // Process inventory records
 const inventory = rawInv.map(r => {

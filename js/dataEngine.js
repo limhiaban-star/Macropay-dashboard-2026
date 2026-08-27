@@ -38,6 +38,7 @@
     filterSales(data, filters) {
       if (!data) return [];
       return data.filter(r => {
+        if (r.anio !== '2026') return false; // Dashboard is specifically for 2026
         if (filters.supplier && filters.supplier !== 'ALL' && r.proveedor !== filters.supplier) return false;
         if (filters.category && filters.supplier !== 'ALL' && filters.category !== 'ALL' && r.categoria !== filters.category) return false;
         if (filters.month && filters.month !== 'ALL' && r.mes !== filters.month) return false;
